@@ -5,10 +5,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthCheckController } from './health-check/health-check.controller';
 import { HealthCheckResolver } from './health-check/health-check.resolver';
-import { UsersResolver } from './users/users.resolver';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
 import { ConversationsModule } from './conversations/conversations.module';
+import { UsersResolver } from './users/users.resolver';
 
 @Module({
   imports: [
@@ -22,6 +22,6 @@ import { ConversationsModule } from './conversations/conversations.module';
     ConversationsModule,
   ],
   controllers: [AppController, HealthCheckController],
-  providers: [AppService, HealthCheckResolver, UsersResolver],
+  providers: [AppService, UsersResolver, HealthCheckResolver],
 })
 export class AppModule {}
