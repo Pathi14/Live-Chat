@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from './models/user.model';
 import { NewUserInput } from './dto/new-user.input';
 
-const users: User[] = [];
+export const users: User[] = [];
 
 @Injectable()
 export class UsersService {

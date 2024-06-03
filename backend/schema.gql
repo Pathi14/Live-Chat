@@ -17,7 +17,9 @@ scalar DateTime
 """message """
 type Message {
   id: ID!
-  msg: String!
+  content: String!
+  sender: User!
+  receiver: User!
   creationDate: DateTime!
 }
 
@@ -38,5 +40,7 @@ input NewUserInput {
 }
 
 input NewMessageInput {
-  msg: String!
+  senderId: ID!
+  receiverId: ID!
+  content: String!
 }
