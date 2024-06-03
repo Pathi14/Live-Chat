@@ -20,18 +20,27 @@ type Message {
   content: String!
   sender: User!
   receiver: User!
+  conversation: Conversation!
   creationDate: DateTime!
+}
+
+type Conversation {
+  id: ID!
+  users: [User!]!
+  messages: [Message!]!
 }
 
 type Query {
   getUsers: [User!]!
   healthCheck: String!
   getMessages: [Message!]!
+  getConversations: [Conversation!]!
 }
 
 type Mutation {
   addUser(newUserData: NewUserInput!): User!
   addMessage(newMessageData: NewMessageInput!): Message!
+  addConversation(newConversationData: NewConversationInput!): Conversation!
 }
 
 input NewUserInput {
@@ -40,7 +49,12 @@ input NewUserInput {
 }
 
 input NewMessageInput {
+  conversationId: ID!
   senderId: ID!
   receiverId: ID!
   content: String!
+}
+
+input NewConversationInput {
+  userIds: [String!]!
 }

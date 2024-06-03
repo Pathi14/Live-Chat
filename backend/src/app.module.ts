@@ -10,6 +10,7 @@ import { MessagesModule } from './messages/messages.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { UsersResolver } from './users/users.resolver';
 import { MessagesResolver } from './messages/messages.resolver';
+import { ConversationsResolver } from './conversations/conversations.resolver';
 
 @Module({
   imports: [
@@ -23,6 +24,12 @@ import { MessagesResolver } from './messages/messages.resolver';
     ConversationsModule,
   ],
   controllers: [AppController, HealthCheckController],
-  providers: [AppService, UsersResolver, HealthCheckResolver, MessagesResolver],
+  providers: [
+    AppService,
+    UsersResolver,
+    HealthCheckResolver,
+    MessagesResolver,
+    ConversationsResolver,
+  ],
 })
 export class AppModule {}

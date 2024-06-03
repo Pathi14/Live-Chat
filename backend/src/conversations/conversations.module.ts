@@ -6,5 +6,6 @@ import { ConversationsResolver } from './conversations.resolver';
 
 @Module({
   providers: [ConversationsService, ConversationsResolver],
+  exports: [ConversationsService],
 })
 export class ConversationsModule {}
