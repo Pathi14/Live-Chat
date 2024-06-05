@@ -1,25 +1,14 @@
-import { cookies } from "next/headers";
 import { ChatLayout } from "@/components/chat/chat-layout";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Home() {
-  const layout = cookies().get("react-resizable-panels:layout");
-  const defaultLayout = layout ? JSON.parse(layout.value) : undefined;
-
   return (
-    <main className="flex h-screen flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
-      <div className="flex justify-between max-w-5xl w-full items-center">
-        <Link href="#" className="text-4xl font-bold text-gradient">
-          Live Chat
-        </Link>
-      </div>
+    <main className="grid grid-rows-[1fr_5fr] place-items-center min-h-screen pb-5">
+      <h1 className="text-3xl font-bold text-gradient">
+        <Link href="#">Live Chat</Link>
+      </h1>
 
-      <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
-        <ChatLayout defaultLayout={defaultLayout} navCollapsedSize={8} />
-      </div>
+      <ChatLayout className="border rounded-lg max-w-[90%]" />
     </main>
   );
 }

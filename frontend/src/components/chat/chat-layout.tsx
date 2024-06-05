@@ -1,98 +1,57 @@
 "use client";
-
-import { userData } from "@/app/data";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "../sidebar";
+import { Sidebar } from "../sidebar/sidebar";
 import { Chat } from "./chat";
+import { conversations } from "../../../dummy";
 
-interface ChatLayoutProps {
-  defaultLayout: number[] | undefined;
-  defaultCollapsed?: boolean;
-  navCollapsedSize: number;
-}
+interface ChatLayoutProps
+  extends Omit<React.ComponentProps<typeof ResizablePanelGroup>, "direction"> {}
 
-export function ChatLayout({
-  defaultLayout = [1000, 480],
-  defaultCollapsed = false,
-  navCollapsedSize,
-}: ChatLayoutProps) {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [selectedUser, setSelectedUser] = React.useState(userData[0]);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkScreenWidth = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    // Initial check
-    checkScreenWidth();
-
-    // Event listener for screen width changes
-    window.addEventListener("resize", checkScreenWidth);
-
-    // Cleanup the event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", checkScreenWidth);
-    };
-  }, []);
+export function ChatLayout({ className, ...rest }: ChatLayoutProps) {
+  const [isSidebarCollapsed, setSidebarCollapsed] = React.useState(false);
 
   return (
     <ResizablePanelGroup
       direction="horizontal"
-      onLayout={(sizes: number[]) => {
-        document.cookie = `react-resizable-panels:layout=${JSON.stringify(
-          sizes
-        )}`;
-      }}
-      className="h-full items-stretch"
+      className={cn("h-full items-stretch", className)}
+      {...rest}
     >
       <ResizablePanel
-        defaultSize={defaultLayout[0]}
-        collapsedSize={navCollapsedSize}
+        defaultSize={30}
+        collapsedSize={8}
         collapsible={true}
-        minSize={isMobile ? 0 : 24}
-        maxSize={isMobile ? 8 : 30}
+        minSize={24}
+        maxSize={30}
         onCollapse={() => {
-          setIsCollapsed(true);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-            true
-          )}`;
+          setSidebarCollapsed(true);
         }}
         onExpand={() => {
-          setIsCollapsed(false);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-            false
-          )}`;
+          setSidebarCollapsed(false);
         }}
         className={cn(
-          isCollapsed &&
+          isSidebarCollapsed &&
             "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out"
         )}
       >
         <Sidebar
-          isCollapsed={isCollapsed || isMobile}
-          links={userData.map((user) => ({
-            name: user.name,
-            messages: user.messages ?? [],
-            avatar: user.avatar,
-            variant: selectedUser.name === user.name ? "grey" : "ghost",
-          }))}
-          isMobile={isMobile}
+          isCollapsed={isSidebarCollapsed}
+          conversations={conversations}
         />
       </ResizablePanel>
+
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+
+      <ResizablePanel defaultSize={70} minSize={30}>
         <Chat
-          messages={selectedUser.messages}
-          selectedUser={selectedUser}
-          isMobile={isMobile}
+          messages={[]}
+          selectedUser={{ id: 1, avatar: "", messages: [], name: "Paul-Henry" }}
+          isMobile={false}
         />
       </ResizablePanel>
     </ResizablePanelGroup>
