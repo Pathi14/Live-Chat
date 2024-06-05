@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Message } from './models/message.model';
 import { NewMessageInput } from './dto/new-message.input';
-import { users } from 'src/users/users.service';
-import { conversations } from 'src/conversations/conversations.service';
+import { users } from '../users/users.service';
+import { conversations } from '../conversations/conversations.service';
 
 export const messages: Message[] = [];
 

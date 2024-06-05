@@ -1,18 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersResolver } from './users.resolver';
+import { MessagesService } from '../messages/messages.service';
+import { conversations } from '../conversations/conversations.service';
+import { NewMessageInput } from '../messages/dto/new-message.input';
 
-describe('UsersResolver', () => {
-  let resolver: UsersResolver;
+describe('MessagesService', () => {
+  let service: MessagesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersResolver],
+      providers: [MessagesService],
     }).compile();
 
-    resolver = module.get<UsersResolver>(UsersResolver);
+    service = module.get<MessagesService>(MessagesService);
   });
 
-  it('should be defined', () => {
-    expect(resolver).toBeDefined();
+  it('should throw an error if conversation not found', async () => {
+    const newMessageInput: NewMessageInput = {
+      content: 'Test message',
+      conversationId: 'nonexistentId',
+      senderId: 'senderId', // Add the missing senderId property
+      receiverId: 'receiverId', // Add the missing receiverId property
+    };
+
+    await expect(service.addMessage(newMessageInput)).rejects.toThrow('Conversation not found');
   });
 });
