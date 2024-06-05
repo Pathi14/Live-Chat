@@ -32,13 +32,15 @@ type Conversation {
 
 type Query {
   getUsers: [User!]!
-  healthCheck: String!
+  health: String!
+  testRedis: String!
   getMessages: [Message!]!
   getConversations(userId: ID!): [Conversation!]!
 }
 
 type Mutation {
   addUser(newUserData: NewUserInput!): User!
+  addJobToQueue: String!
   addMessage(newMessageData: NewMessageInput!): Message!
   addConversation(newConversationData: NewConversationInput!): Conversation!
 }

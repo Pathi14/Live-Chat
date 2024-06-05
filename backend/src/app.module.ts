@@ -3,7 +3,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { HealthCheckController } from './health-check/health-check.controller';
 import { HealthCheckResolver } from './health-check/health-check.resolver';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
@@ -11,7 +10,9 @@ import { ConversationsModule } from './conversations/conversations.module';
 import { UsersResolver } from './users/users.resolver';
 import { MessagesResolver } from './messages/messages.resolver';
 import { ConversationsResolver } from './conversations/conversations.resolver';
-
+import { HealthCheckModule } from './health-check/health-check.module';
+import { BullModule } from '@nestjs/bull';
+import { QueueModule } from './health-check/queue.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -19,11 +20,13 @@ import { ConversationsResolver } from './conversations/conversations.resolver';
       playground: false,
       autoSchemaFile: 'schema.gql',
     }),
+    QueueModule,
     UsersModule,
     MessagesModule,
     ConversationsModule,
+    HealthCheckModule,
   ],
-  controllers: [AppController, HealthCheckController],
+  controllers: [AppController],
   providers: [
     AppService,
     UsersResolver,
