@@ -1,0 +1,134 @@
+{
+  "info": {
+    "name": "Messages API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Add User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/graphql",
+          "host": ["{{url}}"],
+          "path": ["graphql"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\":\"mutation AddUser { addUser(newUserData: { username: \\\"{{username}}\\\", password: \\\"{{password}}\\\" }) { id username creationDate }}\"}"
+        }
+      }
+    },
+    {
+      "name": "Get Users",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/graphql",
+          "host": ["{{url}}"],
+          "path": ["graphql"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\":\"query GetUsers { getUsers { id username creationDate } }\"}"
+        }
+      }
+    },
+    {
+      "name": "Add Conversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/graphql",
+          "host": ["{{url}}"],
+          "path": ["graphql"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\":\"mutation AddConversation { addConversation(newConversationData: { userIds: [\\\"{{user1}}\\\",\\\"{{user2}}\\\"]}) { id users { id username creationDate } messages { id content creationDate } } }\"}"
+        }
+      }
+    },
+    {
+      "name": "Get Conversations",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/graphql",
+          "host": ["{{url}}"],
+          "path": ["graphql"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\":\"query GetConversations { getConversations(userId: \\\"{{userId}}\\\") { id users { id username creationDate } messages { id content creationDate } } }\"}"
+        }
+      }
+    },    {
+      "name": "Add Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/graphql",
+          "host": ["{{url}}"],
+          "path": ["graphql"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\":\"mutation AddMessage { addMessage(newMessageData: { content: \\\"hi\\\", receiverId: \\\"user#1\\\", senderId: \\\"user#2\\\", conversationId: \\\"conversation#1\\\" }) { id content creationDate }}\"}"
+        }
+      }
+    },
+    
+        {
+      "name": "Get Messages",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{url}}/graphql",
+          "host": ["{{url}}"],
+          "path": ["graphql"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\":\"query GetMessages { getMessages { id content creationDate sender { id username creationDate } receiver { id username creationDate } }}\"}"
+        }
+      }
+    }  
+     ]
+}
