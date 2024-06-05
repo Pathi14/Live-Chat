@@ -15,4 +15,4 @@ import { BullModule } from '@nestjs/bull';
   ],
   exports: [BullModule],
 })
-export class QueueModule {}
+export class MessageQueueModule {}

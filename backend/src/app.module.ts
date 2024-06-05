@@ -13,6 +13,7 @@ import { ConversationsResolver } from './conversations/conversations.resolver';
 import { HealthCheckModule } from './health-check/health-check.module';
 import { BullModule } from '@nestjs/bull';
 import { QueueModule } from './health-check/queue.module';
+import { MessageQueueModule } from './messages/message.queue.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -21,6 +22,7 @@ import { QueueModule } from './health-check/queue.module';
       autoSchemaFile: 'schema.gql',
     }),
     QueueModule,
+    MessageQueueModule,
     UsersModule,
     MessagesModule,
     ConversationsModule,
