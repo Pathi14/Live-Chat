@@ -71,3 +71,11 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+## Tests d'intégration
+# installation de newman
+npm install -g newman 
+# création de fichier de collections des tests // commande pour lancer le test 
+   
+newman run test/live_chat.postman_collection.json -e test/postman_environment.json

@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Conversation } from 'src/conversations/models/conversation.model';
-import { User } from 'src/users/models/user.model';
+import { Conversation } from '../../conversations/models/conversation.model';
+import { User } from '../../users/models/user.model';
 
 @ObjectType({ description: 'message ' })
 export class Message {
