@@ -3,6 +3,7 @@ import { Conversation } from './models/conversation.model';
 import { NewConversationInput } from './dto/new-conversation.input';
 import { users } from 'src/users/users.service';
 import { messages } from 'src/messages/messages.service';
+import { User } from 'src/users/models/user.model';
 
 export const conversations: Conversation[] = [];
 
@@ -28,14 +29,22 @@ export class ConversationsService {
     return conversation;
   }
 
-  async getConversations(): Promise<Conversation[]> {
-    return conversations.map((conversation) => {
-      return {
-        ...conversation,
-        messages: messages.filter(
-          (message) => message.conversation.id === conversation.id,
-        ),
-      };
-    });
+  async getConversations(userId: User['id']): Promise<Conversation[]> {
+    const user = users.find((user) => user.id === userId);
+
+    if (!user) {
+      throw new BadRequestException(`User with id ${userId} not found`);
+    }
+
+    return conversations
+      .filter((conversation) => conversation.users.includes(user))
+      .map((conversation) => {
+        return {
+          ...conversation,
+          messages: messages.filter(
+            (message) => message.conversation.id === conversation.id,
+          ),
+        };
+      });
   }
 }

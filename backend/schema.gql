@@ -34,7 +34,7 @@ type Query {
   getUsers: [User!]!
   healthCheck: String!
   getMessages: [Message!]!
-  getConversations: [Conversation!]!
+  getConversations(userId: ID!): [Conversation!]!
 }
 
 type Mutation {
