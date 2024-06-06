@@ -30,6 +30,10 @@ type Conversation {
   messages: [Message!]!
 }
 
+type AuthResponse {
+  access_token: String!
+}
+
 type Query {
   getUsers: [User!]!
   health: String!
@@ -43,6 +47,7 @@ type Mutation {
   addJobToQueue: String!
   addMessage(newMessageData: NewMessageInput!): Message!
   addConversation(newConversationData: NewConversationInput!): Conversation!
+  login(authInput: AuthInput!): AuthResponse!
 }
 
 input NewUserInput {
@@ -59,4 +64,9 @@ input NewMessageInput {
 
 input NewConversationInput {
   userIds: [String!]!
+}
+
+input AuthInput {
+  username: String!
+  password: String!
 }
