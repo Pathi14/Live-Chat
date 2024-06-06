@@ -4,8 +4,15 @@ on:
     branches:
       - main
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        run: npm run test
+
   build:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
