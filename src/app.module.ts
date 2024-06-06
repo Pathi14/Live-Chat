@@ -11,9 +11,10 @@ import { UsersResolver } from './users/users.resolver';
 import { MessagesResolver } from './messages/messages.resolver';
 import { ConversationsResolver } from './conversations/conversations.resolver';
 import { HealthCheckModule } from './health-check/health-check.module';
-import { BullModule } from '@nestjs/bull';
 import { QueueModule } from './health-check/queue.module';
 import { MessageQueueModule } from './messages/message.queue.module';
+import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -27,6 +28,8 @@ import { MessageQueueModule } from './messages/message.queue.module';
     MessagesModule,
     ConversationsModule,
     HealthCheckModule,
+    AuthModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [
