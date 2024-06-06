@@ -10,5 +10,17 @@ services:
       - redis-data:/data
     restart: always
 
+  postgres:
+    image: postgres:latest
+    container_name: "postgres_livechat"
+    ports:
+      - "${DATABASE_PORT}:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
   redis-data:
+  postgres_data:
