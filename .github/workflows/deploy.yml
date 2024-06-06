@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build  -t livechat:latest backend
+        run: docker build  -t livechat:latest .
 
       - name: Tag docker image
         run: docker tag livechat:latest ${{ secrets.DOCKER_USERNAME }}/livechat:latest
