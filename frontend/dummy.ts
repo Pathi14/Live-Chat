@@ -1,18 +1,18 @@
 export const users = [
   {
-    id: 1,
-    name: "Jane Doe",
+    id: "user#1",
+    name: "Paul-Henry",
   },
   {
-    id: 2,
-    name: "John Doe",
+    id: "user#2",
+    name: "Pavone",
   },
   {
-    id: 3,
+    id: "user#3",
     name: "Elizabeth Smith",
   },
   {
-    id: 4,
+    id: "user#4",
     name: "John Smith",
   },
 ];
@@ -38,13 +38,13 @@ export const conversations = [
   },
   {
     id: "conversation#2",
-    users: [users[0], users[1]],
+    users: [users[0], users[2]],
     messages: [
       {
         id: "message#3",
         sender: users[0],
         receiver: users[2],
-        content: "Yo !",
+        content: "Yooooo",
       },
       {
         id: "message#4",

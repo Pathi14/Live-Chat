@@ -14,18 +14,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Textarea } from "../ui/textarea";
 import { EmojiPicker } from "../emoji-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-
-interface ChatBottombarProps {
-  sendMessage: (newMessage: Message) => void;
-  isMobile: boolean;
-}
+import { Message } from "../sidebar/sidebar";
+import { useChatContext } from "@/hooks/useChatContext";
+import { useAuth } from "@/hooks/useAuth";
 
 export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
 
 export default function ChatBottombar({
-  sendMessage,
-  isMobile,
-}: ChatBottombarProps) {
+  onSendMessage,
+}: {
+  onSendMessage: (newMessage: Message) => void;
+}) {
+  const { conversations, activeConversationIndex } = useChatContext();
+  const { user: currentUser } = useAuth();
+  const interlocutor = conversations[activeConversationIndex].users.find(
+    (user) => user.id === currentUser!.id
+  );
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,38 +37,22 @@ export default function ChatBottombar({
     setMessage(event.target.value);
   };
 
-  const handleThumbsUp = () => {
-    const newMessage: Message = {
-      id: message.length + 1,
-      name: loggedInUserData.name,
-      avatar: loggedInUserData.avatar,
-      message: "👍",
-    };
-    sendMessage(newMessage);
+  const handleSend = (newMessage: Message) => {
+    if (!inputRef.current) return;
+    if (!inputRef.current.value) return;
+
+    onSendMessage(newMessage);
     setMessage("");
-  };
-
-  const handleSend = () => {
-    if (message.trim()) {
-      const newMessage: Message = {
-        id: message.length + 1,
-        name: loggedInUserData.name,
-        avatar: loggedInUserData.avatar,
-        message: message.trim(),
-      };
-      sendMessage(newMessage);
-      setMessage("");
-
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      handleSend();
+      handleSend({
+        sender: currentUser!,
+        receiver: interlocutor!,
+        content: message,
+      });
     }
 
     if (event.key === "Enter" && event.shiftKey) {
@@ -90,7 +78,7 @@ export default function ChatBottombar({
             </Link>
           </PopoverTrigger>
           <PopoverContent side="top" className="w-full p-2">
-            {message.trim() || isMobile ? (
+            {message.trim() ? (
               <div className="flex gap-2">
                 <Link
                   href="#"
@@ -130,7 +118,7 @@ export default function ChatBottombar({
             )}
           </PopoverContent>
         </Popover>
-        {!message.trim() && !isMobile && (
+        {!message.trim() && (
           <div className="flex">
             {BottombarIcons.map((icon, index) => (
               <Link
@@ -195,7 +183,13 @@ export default function ChatBottombar({
               "h-9 w-9",
               "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white shrink-0"
             )}
-            onClick={handleSend}
+            onClick={() =>
+              handleSend({
+                sender: currentUser!,
+                receiver: interlocutor!,
+                content: message,
+              })
+            }
           >
             <SendHorizontal size={20} className="text-muted-foreground" />
           </Link>
@@ -207,7 +201,6 @@ export default function ChatBottombar({
               "h-9 w-9",
               "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white shrink-0"
             )}
-            onClick={handleThumbsUp}
           >
             <ThumbsUp size={20} className="text-muted-foreground" />
           </Link>

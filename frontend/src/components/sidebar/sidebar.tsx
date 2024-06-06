@@ -1,26 +1,33 @@
 "use client";
 import SidebarHeader from "./sidebar-header";
 import SidebarButton from "./sidebar-button";
+import { useChatContext } from "@/hooks/useChatContext";
 
 export type User = {
+  id: string;
   name: string;
 };
 
 export type Message = {
+  sender: User;
+  receiver: User;
   content: string;
 };
 
 export type Conversation = {
+  id: string;
   users: User[];
   messages: Message[];
 };
 
 interface SidebarProps {
   isCollapsed: boolean;
-  conversations: Conversation[];
 }
 
-export function Sidebar({ conversations, isCollapsed }: SidebarProps) {
+export function Sidebar({ isCollapsed }: SidebarProps) {
+  const { conversations, activeConversationIndex, setActiveConversationIndex } =
+    useChatContext();
+
   return (
     <div
       data-collapsed={isCollapsed}
@@ -34,9 +41,10 @@ export function Sidebar({ conversations, isCollapsed }: SidebarProps) {
         {conversations.map((conversation, index) => (
           <SidebarButton
             key={index}
-            active={index === 0}
+            active={activeConversationIndex === index}
             collapsed={isCollapsed}
             conversation={conversation}
+            OnMouseDown={() => setActiveConversationIndex(index)}
           />
         ))}
       </div>

@@ -1,32 +1,27 @@
-import { Message, UserData } from "@/app/data";
-import ChatTopbar from "./chat-topbar";
-import { ChatList } from "./chat-list";
-import React from "react";
+import { useChatContext } from "@/hooks/useChatContext";
+import ChatHeader from "./chat-header";
+import { ChatMessagesList } from "./chat-messages-list";
+import React, { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-interface ChatProps {
-  messages?: Message[];
-  selectedUser: UserData;
-  isMobile: boolean;
-}
+export function Chat() {
+  const { conversations, activeConversationIndex } = useChatContext();
+  const activeConversation = conversations[activeConversationIndex];
+  const { user: currentUser } = useAuth();
 
-export function Chat({ messages, selectedUser, isMobile }: ChatProps) {
-  const [messagesState, setMessages] = React.useState<Message[]>(
-    messages ?? []
+  useEffect(() => console.log(activeConversation), [activeConversationIndex]);
+
+  const interlocutor = activeConversation.users.find(
+    (user) => user.id !== currentUser?.id
   );
-
-  const sendMessage = (newMessage: Message) => {
-    setMessages([...messagesState, newMessage]);
-  };
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
-      <ChatTopbar selectedUser={selectedUser} />
+      <ChatHeader interlocutor={interlocutor!} />
 
-      <ChatList
-        messages={messagesState}
-        selectedUser={selectedUser}
-        sendMessage={sendMessage}
-        isMobile={isMobile}
+      <ChatMessagesList
+        messages={activeConversation.messages}
+        interlocutor={interlocutor!}
       />
     </div>
   );

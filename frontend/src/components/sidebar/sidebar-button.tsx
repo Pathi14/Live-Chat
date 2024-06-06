@@ -1,5 +1,5 @@
+"use client";
 import { Button } from "../ui/button";
-import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
@@ -13,12 +13,14 @@ interface SidebarButtonProps {
   collapsed: boolean;
   active: boolean;
   conversation: Conversation;
+  OnMouseDown: () => void;
 }
 
 export default function SidebarButton({
   collapsed,
   active,
   conversation,
+  OnMouseDown,
 }: SidebarButtonProps) {
   const interlocutor = conversation.users[1];
 
@@ -27,7 +29,11 @@ export default function SidebarButton({
       <TooltipProvider>
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
-            <Button variant={active ? "secondary" : "ghost"} className="h-12">
+            <Button
+              variant={active ? "secondary" : "ghost"}
+              className="h-12"
+              onMouseDown={OnMouseDown}
+            >
               <Avatar>
                 <AvatarImage
                   src="https://i.pravatar.cc/300"
@@ -49,6 +55,7 @@ export default function SidebarButton({
     <Button
       variant={active ? "secondary" : "ghost"}
       className="flex justify-start items-center gap-5 h-12"
+      onMouseDown={OnMouseDown}
     >
       <Avatar>
         <AvatarImage src="https://i.pravatar.cc/300" alt={interlocutor.name} />
