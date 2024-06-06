@@ -15,7 +15,8 @@ datasource db {
 
 model User {
   id               String         @id @default(uuid())
-  username         String
+  username         String         @unique
+  password         String
   creationDate     DateTime       @default(now())
   messagesSent     Message[]      @relation("MessageSender")
   messagesReceived Message[]      @relation("MessageReceiver")
