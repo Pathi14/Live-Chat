@@ -15,6 +15,7 @@ import { QueueModule } from './health-check/queue.module';
 import { MessageQueueModule } from './messages/message.queue.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthResolver } from './auth/auth.resolver';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -38,6 +39,7 @@ import { PrismaModule } from './prisma/prisma.module';
     HealthCheckResolver,
     MessagesResolver,
     ConversationsResolver,
+    AuthResolver,
   ],
 })
 export class AppModule {}
