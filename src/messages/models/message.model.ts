@@ -16,8 +16,8 @@ export class Message {
   @Field((type) => User)
   receiver: User;
 
-  @Field((type) => Conversation)
-  conversation: Conversation;
+  @Field((type) => ID)
+  conversationId: string;
 
   @Field()
   creationDate: Date;

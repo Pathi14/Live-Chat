@@ -20,7 +20,7 @@ type Message {
   content: String!
   sender: User!
   receiver: User!
-  conversation: Conversation!
+  conversationId: ID!
   creationDate: DateTime!
 }
 
@@ -39,13 +39,13 @@ type Query {
   health: String!
   testRedis: String!
   getMessages: [Message!]!
-  getConversations(userId: ID!): [Conversation!]!
+  getConversations(userIds: [String!]!): [Conversation!]!
 }
 
 type Mutation {
   addUser(newUserData: NewUserInput!): User!
   addJobToQueue: String!
-  addMessage(newMessageData: NewMessageInput!): Message!
+  addMessage(newMessageData: NewMessageInput!): Boolean!
   addConversation(newConversationData: NewConversationInput!): Conversation!
   login(authInput: AuthInput!): AuthResponse!
 }
