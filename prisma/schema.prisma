@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:24000/postgres/postgres_livechat"
+  url      = env("DATABASE_URL")
 }
 
 model User {
