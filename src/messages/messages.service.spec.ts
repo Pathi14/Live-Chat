@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MessagesService } from './messages.service';
-import { conversations } from '../conversations/conversations.service';
 import { NewMessageInput } from './dto/new-message.input';
 
 describe('MessagesService', () => {
@@ -22,6 +21,8 @@ describe('MessagesService', () => {
       receiverId: 'receiverId', // Add the missing receiverId property
     };
 
-    await expect(service.addMessage(newMessageInput)).rejects.toThrow('Conversation not found');
+    await expect(service.addMessage(newMessageInput)).rejects.toThrow(
+      'Conversation not found',
+    );
   });
 });

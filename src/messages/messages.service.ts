@@ -1,40 +1,38 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { Message } from './models/message.model';
 import { NewMessageInput } from './dto/new-message.input';
-import { User } from '../users/models/user.model';
-import { Conversation } from '../conversations/models/conversation.model';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class MessagesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async addMessage(data: NewMessageInput): Promise<Message> {
     const { content, senderId, receiverId, conversationId } = data;
 
     // Validate sender, receiver, and conversation existence
-    const conversation = await this.prisma.conversation.findUnique({
+    const conversation = await this.databaseService.conversation.findUnique({
       where: { id: conversationId },
     });
     if (!conversation) {
       throw new BadRequestException('Conversation not found');
     }
 
-    const sender = await this.prisma.user.findUnique({
+    const sender = await this.databaseService.user.findUnique({
       where: { id: senderId },
     });
     if (!sender) {
       throw new BadRequestException(`Sender with id ${senderId} not found`);
     }
 
-    const receiver = await this.prisma.user.findUnique({
+    const receiver = await this.databaseService.user.findUnique({
       where: { id: receiverId },
     });
     if (!receiver) {
       throw new BadRequestException(`Receiver with id ${receiverId} not found`);
     }
 
-    const createdMessage = await this.prisma.message.create({
+    const createdMessage = await this.databaseService.message.create({
       data: {
         content,
         sender: { connect: { id: senderId } },
@@ -50,9 +48,9 @@ export class MessagesService {
 
     return createdMessage;
   }
-  
+
   async getMessages(): Promise<Message[]> {
-    const messages = await this.prisma.message.findMany({
+    const messages = await this.databaseService.message.findMany({
       include: {
         sender: true,
         receiver: true,

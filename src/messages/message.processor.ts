@@ -1,7 +1,6 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { PrismaService } from '../prisma/prisma.service';
 import { NewMessageInput } from './dto/new-message.input';
 import { MessagesService } from './messages.service';
 
@@ -19,7 +18,9 @@ export class MessageProcessor {
 
     try {
       const createdMessage = await this.messagesService.addMessage(messageData);
-      this.logger.debug(`Message with id ${createdMessage.id} saved successfully.`);
+      this.logger.debug(
+        `Message with id ${createdMessage.id} saved successfully.`,
+      );
       console.log(`Message with id ${createdMessage.id} saved successfully.`);
     } catch (error) {
       this.logger.error(`Failed to save message: ${error.message}`);

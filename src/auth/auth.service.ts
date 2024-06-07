@@ -1,27 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
+import { AuthInput } from './dto/auth.input';
+import { DatabaseService } from 'src/database/database.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService
+    private databaseService: DatabaseService,
+    private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.validateUser(username, pass);
-    if (user) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
+  async login(authInput: AuthInput) {
+    const user = await this.databaseService.user.findUnique({
+      where: { username: authInput.username },
+    });
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.id };
+    if (!user) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const isPasswordValid = bcrypt.compareSync(
+      authInput.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
     return {
-      access_token: this.jwtService.sign(payload),
+      user,
+      access_token: this.jwtService.sign(user),
     };
   }
 }
