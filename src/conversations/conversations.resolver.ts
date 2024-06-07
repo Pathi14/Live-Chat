@@ -1,23 +1,26 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Resolver, Mutation, Query, Args, ID } from '@nestjs/graphql';
 import { Conversation } from './models/conversation.model';
-import { ConversationsService } from './conversations.service';
 import { NewConversationInput } from './dto/new-conversation.input';
-import { User } from 'src/users/models/user.model';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { ConversationsService } from './conversations.service';
 
 @Resolver(() => Conversation)
 export class ConversationsResolver {
   constructor(private readonly conversationsService: ConversationsService) {}
+
   @Mutation(() => Conversation)
   async addConversation(
     @Args('newConversationData') newConversationData: NewConversationInput,
   ): Promise<Conversation> {
-    return this.conversationsService.createConversation(newConversationData);
+    const conversation = await this.conversationsService.createConversation(newConversationData);
+    return conversation;
   }
 
   @Query(() => [Conversation])
   async getConversations(
-    @Args('userId', { type: () => ID }) userId: User['id'],
+    @Args('userIds', { type: () => [String] }) userIds: string[],
   ): Promise<Conversation[]> {
-    return this.conversationsService.getConversations(userId);
+    return this.conversationsService.getConversations(userIds);
   }
 }

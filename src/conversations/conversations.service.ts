@@ -1,50 +1,79 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Conversation } from './models/conversation.model';
 import { NewConversationInput } from './dto/new-conversation.input';
-import { users } from '../users/users.service';
-import { messages } from '../messages/messages.service';
-import { User } from '../users/models/user.model';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '@prisma/client';
+import { Conversation } from './models/conversation.model';
 
 export const conversations: Conversation[] = [];
 
 @Injectable()
 export class ConversationsService {
-  async createConversation(data: NewConversationInput): Promise<Conversation> {
-    for (const userId of data.userIds) {
-      const user = users.find((user) => user.id === userId);
+  constructor(private prisma: PrismaService) {}
 
-      if (!user) {
-        throw new BadRequestException(`User with id ${userId} not found`);
-      }
+  async createConversation(data: NewConversationInput): Promise<Conversation> {
+    
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: data.userIds } },
+    });
+
+    if (users.length !== data.userIds.length) {
+      throw new BadRequestException(`One or more users not found`);
     }
 
-    const conversation: Conversation = {
-      id: `conversation#${conversations.length + 1}`,
-      users: users.filter((user) => data.userIds.includes(user.id)),
-      messages: [],
-    };
-
-    conversations.push(conversation);
-
-    return conversation;
+    return this.prisma.conversation.create({
+      data: {
+        users: {
+          connect: data.userIds.map((userId) => ({ id: userId })),
+        },
+      },
+      include: {
+        users: true,
+        messages: {
+          include: {
+            sender: true,
+            receiver: true,
+          }
+        },
+      },
+    });
   }
 
-  async getConversations(userId: User['id']): Promise<Conversation[]> {
-    const user = users.find((user) => user.id === userId);
+  async getConversations(userIds: string[]): Promise<Conversation[]> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: userIds,
+        },
+      },
+    });
 
-    if (!user) {
-      throw new BadRequestException(`User with id ${userId} not found`);
+    const foundUserIds = users.map(user => user.id);
+    const notFoundUserIds = userIds.filter(id => !foundUserIds.includes(id));
+    if (notFoundUserIds.length > 0) {
+      throw new BadRequestException(`Users with ids ${notFoundUserIds.join(', ')} not found`);
     }
 
-    return conversations
-      .filter((conversation) => conversation.users.includes(user))
-      .map((conversation) => {
-        return {
-          ...conversation,
-          messages: messages.filter(
-            (message) => message.conversation.id === conversation.id,
-          ),
-        };
-      });
+    const conversations = await this.prisma.conversation.findMany({
+      where: {
+        users: {
+          some: {
+            id: {
+              in: userIds,
+            },
+          },
+        },
+      },
+      include: {
+        users: true,
+        messages: {
+          include: {
+            sender: true,
+            receiver: true,
+          },
+        },
+      },
+    });
+
+    return conversations;
   }
 }
