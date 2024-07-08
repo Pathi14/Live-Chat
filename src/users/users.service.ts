@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { NewUserInput } from './dto/new-user.input';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { PrismaClient,User } from '@prisma/client'
+import { DatabaseService } from '../database/database.service';
 
 export const users: User[] = [];
 

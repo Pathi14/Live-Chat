@@ -1,58 +1,69 @@
+import { Test, TestingModule } from '@nestjs/testing';
 import { ConversationsService } from './conversations.service';
-import { NewConversationInput } from './dto/new-conversation.input';
-import { users } from '../users/users.service';
-import { messages } from '../messages/messages.service';
-import { User } from 'src/users/models/user.model';
-import { UsersService } from '../users/users.service';
+import { BadRequestException } from '@nestjs/common';
+import { DatabaseService } from '../database/database.service';
 
 describe('ConversationsService', () => {
   let service: ConversationsService;
-  let usersService: UsersService;
+  let databaseService: DatabaseService;
 
-  beforeEach(() => {
-    service = new ConversationsService();
-    usersService = new UsersService(); // initialize your UsersService
+  // Configuration du module de test avant chaque test
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ConversationsService,
+        {
+          provide: DatabaseService,
+          useValue: {
+            user: {
+              findMany: jest.fn(),
+            },
+            conversation: {
+              findMany: jest.fn(),
+            },
+          },
+        },
+      ],
+    }).compile();
 
-    // Create the users needed for the tests
-    usersService.addUser({ username: 'Test User 1', password: 'password&123' });
-    usersService.addUser({ username: 'Test User 2', password: 'password' });
+    service = module.get<ConversationsService>(ConversationsService);
+    databaseService = module.get<DatabaseService>(DatabaseService);
   });
 
-  it('should create a new conversation', async () => {
-    const newConversation: NewConversationInput = {
-      userIds: ['user#1', 'user#2'],
-    };
+  it('should throw BadRequestException if any user ID is not found', async () => {
+    const userIds = ['user1', 'user2'];
+    // Mock pour simuler que l'utilisateur avec l'ID 'user2' n'est pas trouvé
+    jest.spyOn(databaseService.user, 'findMany').mockResolvedValue([
+      { id: 'user1', username: 'UserOne', password: 'password1', creationDate: new Date() },
+    ]);
 
-    const conversation = await service.createConversation(newConversation);
-
-    expect(conversation).toHaveProperty('id');
-    expect(conversation.users).toHaveLength(2);
-    expect(conversation.messages).toHaveLength(0);
+    // Vérification que l'exception BadRequestException est lancée
+    await expect(service.getConversations(userIds)).rejects.toThrow(
+      new BadRequestException('Users with ids user2 not found'),
+    );
   });
 
-  it('should throw an error if user not found when creating a conversation', async () => {
-    const newConversation: NewConversationInput = {
-      userIds: ['user#1', 'nonexistentUser'],
-    };
+  it('should return conversations if all user IDs are found', async () => {
+    const userIds = ['user1', 'user2'];
+    const mockUsers = [
+      { id: 'user1', username: 'UserOne', password: 'password1', creationDate: new Date() },
+      { id: 'user2', username: 'UserTwo', password: 'password2', creationDate: new Date() },
+    ];
+    const mockConversations = [
+      {
+        id: 'conversation1',
+        users: mockUsers,
+        messages: [],
+      },
+    ];
 
-    await expect(service.createConversation(newConversation)).rejects.toThrow();
-  });
+    // Mock pour simuler que tous les utilisateurs sont trouvés
+    jest.spyOn(databaseService.user, 'findMany').mockResolvedValue(mockUsers);
+    // Mock pour simuler que les conversations sont trouvées
+    jest.spyOn(databaseService.conversation, 'findMany').mockResolvedValue(mockConversations);
 
-  it('should get conversations for a user', async () => {
-    const userId = 'user#1';
-    const conversations = await service.getConversations(userId);
-
-    expect(conversations).toBeInstanceOf(Array);
-    conversations.forEach((conversation) => {
-      expect(conversation.users).toContainEqual(
-        expect.objectContaining({ id: userId }),
-      );
-    });
-  });
-
-  it('should throw an error if user not found when getting conversations', async () => {
-    const userId = 'nonexistentUser';
-
-    await expect(service.getConversations(userId)).rejects.toThrow();
+    const result = await service.getConversations(userIds);
+    // Vérification que les conversations retournées sont correctes
+    expect(result).toEqual(mockConversations);
   });
 });
