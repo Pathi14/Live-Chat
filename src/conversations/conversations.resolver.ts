@@ -25,6 +25,7 @@ export class ConversationsResolver {
     return conversation;
   }
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => [Conversation])
   async getConversations(
     @Args('userIds', { type: () => [String] }) userIds: string[],
