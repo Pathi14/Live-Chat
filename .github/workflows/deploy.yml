@@ -7,6 +7,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -26,6 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
