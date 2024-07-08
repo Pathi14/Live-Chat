@@ -17,5 +17,9 @@ COPY . .
 # Construisez l'application NestJS
 RUN npm run build
 
+RUN npx prisma migrate deploy
+
+RUN npx prisma generate
+
 # Commande pour lancer l'application
 CMD ["node", "dist/main"]
