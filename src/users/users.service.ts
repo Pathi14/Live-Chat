@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { NewUserInput } from './dto/new-user.input';
 import * as bcrypt from 'bcrypt';
-import { PrismaClient,User } from '@prisma/client'
-import { DatabaseService } from '../database/database.service';
+import { User } from '@prisma/client';
+import { DatabaseService } from 'src/database/database.service';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 
 export const users: User[] = [];
 
@@ -20,10 +21,12 @@ export class UsersService {
     });
   }
 
+  @UseGuards(GqlAuthGuard)
   async getUserByUsername(username: string): Promise<User | null> {
     return this.databaseService.user.findUnique({ where: { username } });
   }
 
+  @UseGuards(GqlAuthGuard)
   async getUsers(): Promise<User[]> {
     return this.databaseService.user.findMany();
   }
