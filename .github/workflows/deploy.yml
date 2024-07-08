@@ -16,10 +16,10 @@ jobs:
       - name: Run tests
         run: npm run test
 
-     - name: Install Newman
+      - name: Install Newman
         run: npm install -g newman
 
-    - name: Run Postman tests
+      - name: Run Postman tests
         run: newman run test/live_chat.postman_collection.json -e test/postman_environment.json
 
   build:
