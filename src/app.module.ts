@@ -14,7 +14,6 @@ import { HealthCheckModule } from './health-check/health-check.module';
 import { QueueModule } from './health-check/queue.module';
 import { MessageQueueModule } from './messages/message.queue.module';
 import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
 import { AuthResolver } from './auth/auth.resolver';
 @Module({
   imports: [
@@ -30,7 +29,6 @@ import { AuthResolver } from './auth/auth.resolver';
     ConversationsModule,
     HealthCheckModule,
     AuthModule,
-    PrismaModule,
   ],
   controllers: [AppController],
   providers: [

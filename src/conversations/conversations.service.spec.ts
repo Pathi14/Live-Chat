@@ -5,18 +5,17 @@ import { messages } from '../messages/messages.service';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from '../users/users.service';
 
-
 describe('ConversationsService', () => {
   let service: ConversationsService;
-  let usersService: UsersService; 
+  let usersService: UsersService;
 
   beforeEach(() => {
     service = new ConversationsService();
     usersService = new UsersService(); // initialize your UsersService
 
     // Create the users needed for the tests
-    usersService.addUser({  username: 'Test User 1', password: 'password&123'});
-    usersService.addUser({  username: 'Test User 2', password: 'password'});
+    usersService.addUser({ username: 'Test User 1', password: 'password&123' });
+    usersService.addUser({ username: 'Test User 2', password: 'password' });
   });
 
   it('should create a new conversation', async () => {
@@ -44,8 +43,10 @@ describe('ConversationsService', () => {
     const conversations = await service.getConversations(userId);
 
     expect(conversations).toBeInstanceOf(Array);
-    conversations.forEach(conversation => {
-      expect(conversation.users).toContainEqual(expect.objectContaining({ id: userId }));
+    conversations.forEach((conversation) => {
+      expect(conversation.users).toContainEqual(
+        expect.objectContaining({ id: userId }),
+      );
     });
   });
 

@@ -1,48 +1,63 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Message } from './models/message.model';
 import { NewMessageInput } from './dto/new-message.input';
-import { users } from 'src/users/users.service';
-import { conversations } from 'src/conversations/conversations.service';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-
-export const messages: Message[] = [];
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class MessagesService {
-  constructor(
-    @InjectQueue('message') private readonly messageQueue: Queue,
-  ) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async addMessage(data: NewMessageInput): Promise<Message> {
-    const conversation = conversations.find(
-      (conversation) => conversation.id === data.conversationId,
-    );
+    const { content, senderId, receiverId, conversationId } = data;
 
+    // Validate sender, receiver, and conversation existence
+    const conversation = await this.databaseService.conversation.findUnique({
+      where: { id: conversationId },
+    });
     if (!conversation) {
       throw new BadRequestException('Conversation not found');
     }
 
-    const message: Message = {
-      content: data.content,
-      id: `message#${messages.length + 1}`,
-      receiver: users.find((user) => user.id === data.receiverId),
-      sender: users.find((user) => user.id === data.senderId),
-      creationDate: new Date(),
-      conversation: {
-        ...conversation,
-        messages: messages.filter(
-          (message) => message.conversation.id === conversation.id,
-        ),
+    const sender = await this.databaseService.user.findUnique({
+      where: { id: senderId },
+    });
+    if (!sender) {
+      throw new BadRequestException(`Sender with id ${senderId} not found`);
+    }
+
+    const receiver = await this.databaseService.user.findUnique({
+      where: { id: receiverId },
+    });
+    if (!receiver) {
+      throw new BadRequestException(`Receiver with id ${receiverId} not found`);
+    }
+
+    const createdMessage = await this.databaseService.message.create({
+      data: {
+        content,
+        sender: { connect: { id: senderId } },
+        receiver: { connect: { id: receiverId } },
+        conversation: { connect: { id: conversationId } },
       },
-    };
+      include: {
+        sender: true,
+        receiver: true,
+        conversation: true,
+      },
+    });
 
-    await this.messageQueue.add('saveMessage', message);
-
-    return message;
+    return createdMessage;
   }
 
   async getMessages(): Promise<Message[]> {
+    const messages = await this.databaseService.message.findMany({
+      include: {
+        sender: true,
+        receiver: true,
+        conversation: true,
+      },
+    });
+
     return messages;
   }
 }
