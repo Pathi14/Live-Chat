@@ -27,9 +27,7 @@ export class ConversationsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => [Conversation])
-  async getConversations(
-    @Args('userIds', { type: () => [String] }) userIds: string[],
-  ): Promise<Conversation[]> {
-    return this.conversationsService.getConversations(userIds);
+  async getConversations(@CurrentUser() user: User): Promise<Conversation[]> {
+    return this.conversationsService.getConversations([user.id]);
   }
 }

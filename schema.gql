@@ -39,8 +39,12 @@ type Query {
   getUsers: [User!]!
   health: String!
   testRedis: String!
-  getMessages: [Message!]!
-  getConversations(userIds: [String!]!): [Conversation!]!
+  getMessages(getMessagesInput: GetMessagesInput!): [Message!]!
+  getConversations: [Conversation!]!
+}
+
+input GetMessagesInput {
+  conversationId: ID!
 }
 
 type Mutation {
@@ -58,8 +62,6 @@ input NewUserInput {
 
 input NewMessageInput {
   conversationId: ID!
-  senderId: ID!
-  receiverId: ID!
   content: String!
 }
 
