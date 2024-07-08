@@ -14,6 +14,12 @@ RUN npm install
 # Copiez tout le reste du projet dans le répertoire de travail
 COPY . .
 
+# Lancer les migrations de la base de données
+RUN npx prisma migrate deploy
+
+# Générer le client Prisma
+RUN npx prisma generate
+
 # Construisez l'application NestJS
 RUN npm run build
 
