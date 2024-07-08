@@ -2,8 +2,8 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { NewUserInput } from './dto/new-user.input';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
-import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
+import { DatabaseService } from '../database/database.service';
+import { GqlAuthGuard } from '../auth/gql-auth.guard';
 
 export const users: User[] = [];
 

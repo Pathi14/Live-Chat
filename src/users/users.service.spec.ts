@@ -35,37 +35,38 @@ describe('UsersService', () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [UsersService, DatabaseService],
       }).compile();
-  
+
       service = module.get<UsersService>(UsersService);
       databaseService = module.get<DatabaseService>(DatabaseService);
     });
-  
+
     // Nettoyage des mocks après chaque test de addUser
     afterEach(() => {
       jest.clearAllMocks();
     });
-  
+
     it('should add a new user with hashed password', async () => {
       const newUser: NewUserInput = {
         username: 'testuser',
         password: 'testpassword',
       };
-  
-      const hashedPassword = '$2b$10$hZEbHQ2kgitKFLOojX5tT.2iIt8ilE5tkOPiRkOzk6h8QTcMlsNJe';
+
+      const hashedPassword =
+        '$2b$10$hZEbHQ2kgitKFLOojX5tT.2iIt8ilE5tkOPiRkOzk6h8QTcMlsNJe';
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
-  
+
       const createdUser: User = {
         id: 'user1',
         username: 'testuser',
         password: hashedPassword,
         creationDate: new Date('2024-07-07T12:34:45.014Z'),
       };
-  
+
       // Mock de la méthode create de databaseService
       databaseService.user.create = jest.fn().mockResolvedValue(createdUser);
-  
+
       const result = await service.addUser(newUser);
-  
+
       // Vérification que la méthode create a été appelée avec les bons paramètres
       expect(databaseService.user.create).toHaveBeenCalledWith({
         data: {
@@ -73,7 +74,7 @@ describe('UsersService', () => {
           password: hashedPassword,
         },
       });
-  
+
       // Vérification que le résultat est correct
       expect(result).toEqual(createdUser);
     });
@@ -90,12 +91,16 @@ describe('UsersService', () => {
       };
 
       // Mock de la méthode findUnique de databaseService
-      jest.spyOn(databaseService.user, 'findUnique').mockResolvedValue(expectedUser);
+      jest
+        .spyOn(databaseService.user, 'findUnique')
+        .mockResolvedValue(expectedUser);
 
       const result = await service.getUserByUsername(username);
 
       // Vérification que la méthode findUnique a été appelée avec les bons paramètres
-      expect(databaseService.user.findUnique).toHaveBeenCalledWith({ where: { username } });
+      expect(databaseService.user.findUnique).toHaveBeenCalledWith({
+        where: { username },
+      });
       // Vérification que le résultat est correct
       expect(result).toEqual(expectedUser);
     });
@@ -109,7 +114,9 @@ describe('UsersService', () => {
       const result = await service.getUserByUsername(username);
 
       // Vérification que la méthode findUnique a été appelée avec les bons paramètres
-      expect(databaseService.user.findUnique).toHaveBeenCalledWith({ where: { username } });
+      expect(databaseService.user.findUnique).toHaveBeenCalledWith({
+        where: { username },
+      });
       // Vérification que le résultat est null
       expect(result).toBeNull();
     });
@@ -118,12 +125,24 @@ describe('UsersService', () => {
   describe('getUsers', () => {
     it('should return all users', async () => {
       const expectedUsers: User[] = [
-        { id: 'user1', username: 'user1', password: 'hashedpassword1', creationDate: new Date() },
-        { id: 'user2', username: 'user2', password: 'hashedpassword2', creationDate: new Date() },
+        {
+          id: 'user1',
+          username: 'user1',
+          password: 'hashedpassword1',
+          creationDate: new Date(),
+        },
+        {
+          id: 'user2',
+          username: 'user2',
+          password: 'hashedpassword2',
+          creationDate: new Date(),
+        },
       ];
 
       // Mock de la méthode findMany de databaseService
-      jest.spyOn(databaseService.user, 'findMany').mockResolvedValue(expectedUsers);
+      jest
+        .spyOn(databaseService.user, 'findMany')
+        .mockResolvedValue(expectedUsers);
 
       const result = await service.getUsers();
 
